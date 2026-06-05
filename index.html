@@ -145,7 +145,7 @@ function LottiePlayer({ playing, style }) {
     const [ready, setReady] = useState(false)
 
     useEffect(() => {
-        const lottie = (window as any).lottie
+        const lottie = window.lottie
         if (!lottie || !containerRef.current) return
         animRef.current = lottie.loadAnimation({
             container: containerRef.current,
@@ -177,7 +177,7 @@ function Screen2({ onBack, menuOpen, setMenuOpen }) {
 
     // Load lottie-web from CDN
     useEffect(() => {
-        if ((window as any).lottie) { setLottieLoaded(true); return }
+        if (window.lottie) { setLottieLoaded(true); return }
         const script = document.createElement("script")
         script.src = "https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"
         script.onload = () => setLottieLoaded(true)
