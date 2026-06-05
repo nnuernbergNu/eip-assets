@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>EIP – Klima</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    width: 100%; height: 100%;
+    background: #F5F0E8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    touch-action: none;
+  }
+  #app {
+    position: relative;
+    width: 393px;
+    height: 852px;
+    background: #F5F0E8;
+    overflow: hidden;
+  }
+  /* Lottie container – always in DOM, toggled via opacity */
+  #lottie-container {
+    position: absolute;
+    left: 30px;
+    top: 280px;
+    width: 320px;
+    height: 310px;
+    z-index: 4;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  #erde-static {
+    position: absolute;
+    left: 30px;
+    top: 280px;
+    width: 320px;
+    height: 310px;
+    z-index: 4;
+    object-fit: contain;
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 0.2s;
+  }
+  #gyroball {
+    position: absolute;
+    border-radius: 50%;
+    background: #DCFF89;
+    mix-blend-mode: exclusion;
+    z-index: 20;
+    touch-action: none;
+    cursor: grab;
+  }
+  #gyro-btn {
+    position: absolute;
+    bottom: 90px;
+    right: 24px;
+    background: #1C1C1C;
+    color: #DCFF89;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 12px 20px;
+    cursor: pointer;
+    z-index: 30;
+    border: none;
+    user-select: none;
+  }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400..800&family=DM+Sans:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div id="app">
+
+  <!-- Background circle -->
+  <div style="position:absolute;left:-222px;top:-514px;width:740px;height:691px;border-radius:50%;background:radial-gradient(circle,#F6F3EA 0%,#4A90D9 100%);z-index:0;"></div>
+
+  <!-- Header -->
+  <h1 id="klima-title" style="position:absolute;left:24px;top:24px;font-family:'Syne',sans-serif;font-size:36px;font-weight:736;line-height:1.0;letter-spacing:-0.02em;color:#1C1C1C;text-transform:uppercase;z-index:10;"></h1>
+  <p id="sub-title" style="position:absolute;left:24px;top:67px;font-family:'DM Sans',sans-serif;font-size:18px;font-weight:600;letter-spacing:0.01em;line-height:1.2;color:#1C1C1C;text-transform:uppercase;white-space:pre-line;z-index:10;opacity:0;">EVERYTHING IS\nPOLITICAL</p>
+
+  <!-- Collage: Vogel -->
+  <div style="position:absolute;left:24px;top:150px;width:200px;height:150px;z-index:4;">
+    <img src="https://i.postimg.cc/m2V6S0hz/Footage-Vogel.png" style="width:100%;height:100%;object-fit:contain;transform:scaleX(-1);">
+  </div>
+  <!-- Collage: Blume -->
+  <div style="position:absolute;right:-30px;top:60px;width:160px;height:250px;z-index:4;">
+    <img src="https://i.postimg.cc/pXk1Bgy8/Footage-Blume.png" style="width:100%;height:100%;object-fit:contain;transform:rotate(-50deg);">
+  </div>
+  <!-- Collage: Blatt -->
+  <div style="position:absolute;right:-60px;top:520px;width:160px;height:360px;z-index:4;">
+    <img src="https://i.postimg.cc/m2V6S0h1/Footage-Blatt.png" style="width:100%;height:100%;object-fit:contain;transform:rotate(-50deg);">
+  </div>
+  <!-- Collage: Wal -->
+  <div style="position:absolute;left:-60px;top:670px;width:320px;height:180px;z-index:4;">
+    <img src="https://i.postimg.cc/xTgFPWqj/Footage-Wal.png" style="width:100%;height:100%;object-fit:contain;transform:scaleX(-1) rotate(40deg);">
+  </div>
+
+  <!-- Erde static -->
+  <img id="erde-static" src="https://i.postimg.cc/wxZd3qBD/test-00000.png" alt="">
+
+  <!-- Lottie container -->
+  <div id="lottie-container"></div>
+
+  <!-- Gyroball -->
+  <div id="gyroball" style="width:140px;height:140px;left:126px;top:330px;"></div>
+
+  <!-- Gyro permission button -->
+  <button id="gyro-btn">◎ BEWEGUNG AKTIVIEREN</button>
+
+  <!-- WAS IST DAS button -->
+  <svg style="position:absolute;bottom:24px;right:24px;width:140px;height:70px;z-index:30;overflow:visible;">
+    <rect x="0" y="7" width="140" height="40" fill="#1C1C1C"/>
+    <polygon points="126,47 97.26,47 49.37,70" fill="#1C1C1C"/>
+    <text x="70" y="27" text-anchor="middle" dominant-baseline="middle" fill="#DCFF89" font-family="'DM Sans',sans-serif" font-size="14" font-weight="700" letter-spacing="0.5">WAS IST DAS?</text>
+  </svg>
+
+</div>
+
+<script>
+// ─── LOTTIE JSON (embedded) ─────────────────────────────────────────────────
+const LOTTIE_DATA = {
+  "v":"5.12.1","fr":29.9700012207031,"ip":0,"op":316.000012870944,
+  "w":1000,"h":1000,"nm":"Komp 1","ddd":1,
+  "assets":[
+    {"id":"image_0","w":735,"h":649,"u":"","p":"https://res.cloudinary.com/dbmu1bwq8/image/upload/v1780598307/img_0_ij1ykk.png","e":0},
+    {"id":"image_1","w":735,"h":649,"u":"","p":"https://res.cloudinary.com/dbmu1bwq8/image/upload/v1780598307/img_1_zvokce.png","e":0},
+    {"id":"image_2","w":735,"h":649,"u":"","p":"https://res.cloudinary.com/dbmu1bwq8/image/upload/v1780598306/img_2_k9odvu.png","e":0}
+  ],
+  "layers":[
+    {"ddd":0,"ind":1,"ty":13,"nm":"Kamera 1","sr":1,
+     "pe":{"a":0,"k":2666.667,"ix":1},
+     "ks":{"p":{"a":1,"k":[
+       {"i":{"x":0.667,"y":1},"o":{"x":0.333,"y":0},"t":0,"s":[500,500,-2582.667],"to":[0,0,-14],"ti":[0,0,0]},
+       {"i":{"x":0.667,"y":1},"o":{"x":0.333,"y":0},"t":155,"s":[500,500,-2666.667],"to":[0,0,0],"ti":[0,0,-14]},
+       {"t":315.000012830213,"s":[500,500,-2582.667]}
+     ],"ix":2},
+     "or":{"a":0,"k":[0,0,0],"ix":7},"rx":{"a":0,"k":0,"ix":8},"ry":{"a":0,"k":0,"ix":9},"rz":{"a":0,"k":0,"ix":10}},
+     "ip":0,"op":324.000013196791,"st":0,"bm":0},
+    {"ddd":1,"ind":2,"ty":2,"nm":"Erde layer 0","refId":"image_0","sr":1,
+     "ks":{"o":{"a":0,"k":100,"ix":11},"rx":{"a":0,"k":0,"ix":8},"ry":{"a":0,"k":0,"ix":9},
+       "rz":{"a":1,"k":[
+         {"i":{"x":[0.667],"y":[1]},"o":{"x":[0.333],"y":[0]},"t":0,"s":[-9]},
+         {"i":{"x":[0.667],"y":[1]},"o":{"x":[0.333],"y":[0]},"t":61,"s":[-16]},
+         {"i":{"x":[0.667],"y":[1]},"o":{"x":[0.333],"y":[0]},"t":143,"s":[-11]},
+         {"i":{"x":[0.667],"y":[1]},"o":{"x":[0.333],"y":[0]},"t":248,"s":[-14]},
+         {"t":315.000012830213,"s":[-9]}
+       ],"ix":10},
+       "or":{"a":0,"k":[0,0,0],"ix":7},"p":{"a":0,"k":[940,666,0],"ix":2},
+       "a":{"a":0,"k":[687.5,458.5,0],"ix":1},"s":{"a":0,"k":[122,122,122],"ix":6}},
+     "ao":0,"ip":0,"op":324.000013196791,"st":0,"bm":0},
+    {"ddd":1,"ind":3,"ty":2,"nm":"Erde layer 1","refId":"image_1","sr":1,
+     "ks":{"o":{"a":0,"k":100,"ix":11},"rx":{"a":0,"k":0,"ix":8},"ry":{"a":0,"k":0,"ix":9},
+       "rz":{"a":1,"k":[
+         {"i":{"x":[0.667],"y":[1]},"o":{"x":[0.333],"y":[0]},"t":0,"s":[0]},
+         {"i":{"x":[0.667],"y":[1]},"o":{"x":[0.333],"y":[0]},"t":95,"s":[9]},
+         {"i":{"x":[0.667],"y":[1]},"o":{"x":[0.333],"y":[0]},"t":192,"s":[4]},
+         {"t":315.000012830213,"s":[0]}
+       ],"ix":10},
+       "or":{"a":0,"k":[0,0,0],"ix":7},"p":{"a":0,"k":[11.65,722,0],"ix":2},
+       "a":{"a":0,"k":[0,556.5,0],"ix":1},"s":{"a":0,"k":[122,122,122],"ix":6}},
+     "ao":0,"ip":0,"op":324.000013196791,"st":0,"bm":0},
+    {"ddd":1,"ind":5,"ty":2,"nm":"Erde layer 2","refId":"image_2","sr":1,
+     "ks":{"o":{"a":0,"k":100,"ix":11},"rx":{"a":0,"k":0,"ix":8},"ry":{"a":0,"k":0,"ix":9},
+       "rz":{"a":1,"k":[
+         {"i":{"x":[0.667],"y":[1]},"o":{"x":[0.333],"y":[0]},"t":0,"s":[0]},
+         {"i":{"x":[0.667],"y":[1]},"o":{"x":[0.333],"y":[0]},"t":167,"s":[5]},
+         {"t":315.000012830213,"s":[0]}
+       ],"ix":10},
+       "or":{"a":0,"k":[0,0,0],"ix":7},"p":{"a":0,"k":[502,498,0],"ix":2},
+       "a":{"a":0,"k":[359.5,301.812,0],"ix":1},
+       "s":{"a":1,"k":[
+         {"i":{"x":[0.667,0.667,0.667],"y":[1,1,1]},"o":{"x":[0.333,0.333,0.333],"y":[0,0,0]},"t":0,"s":[128,128,100]},
+         {"i":{"x":[0.667,0.667,0.667],"y":[1,1,1]},"o":{"x":[0.333,0.333,0.333],"y":[0,0,0]},"t":76,"s":[122,122,100]},
+         {"i":{"x":[0.667,0.667,0.667],"y":[1,1,1]},"o":{"x":[0.333,0.333,0.333],"y":[0,0,0]},"t":153,"s":[128,128,100]},
+         {"i":{"x":[0.667,0.667,0.667],"y":[1,1,1]},"o":{"x":[0.333,0.333,0.333],"y":[0,0,0]},"t":234,"s":[122,122,100]},
+         {"t":315.000012830213,"s":[128,128,100]}
+       ],"ix":6}},
+     "ao":0,"ip":0,"op":324.000013196791,"st":0,"bm":0}
+  ],
+  "markers":[]
+};
+
+// ─── GYROBALL STATE ──────────────────────────────────────────────────────────
+const ball = document.getElementById('gyroball');
+const lottieEl = document.getElementById('lottie-container');
+const erdeStatic = document.getElementById('erde-static');
+const gyroBtn = document.getElementById('gyro-btn');
+
+let ballX = 196, ballY = 400;
+let ballSize = 140;
+let velX = 0, velY = 0;
+let gravX = 0, gravY = 0;
+let hasGyro = false;
+let isDragging = false;
+let isPinching = false;
+let pinchStartDist = 0, pinchStartSize = 140;
+
+// Lottie instance
+let anim = null;
+let lottieReady = false;
+let erdeHit = false;
+
+function initLottie() {
+  anim = lottie.loadAnimation({
+    container: lottieEl,
+    renderer: 'svg',
+    loop: true,
+    autoplay: false,
+    animationData: LOTTIE_DATA
+  });
+  anim.addEventListener('data_ready', () => { lottieReady = true; });
+}
+initLottie();
+
+// ─── TYPEWRITER ──────────────────────────────────────────────────────────────
+const titleEl = document.getElementById('klima-title');
+const subEl = document.getElementById('sub-title');
+let titleDone = false;
+
+function typewriter(el, text, speed, onDone) {
+  let i = 0;
+  const iv = setInterval(() => {
+    el.textContent = text.slice(0, ++i);
+    if (i >= text.length) { clearInterval(iv); if (onDone) onDone(); }
+  }, speed);
+}
+
+typewriter(titleEl, 'KLIMA', 80, () => {
+  titleDone = true;
+  subEl.style.opacity = '1';
+  typewriter(subEl, 'EVERYTHING IS\nPOLITICAL', 40);
+});
+
+// ─── COLLISION ───────────────────────────────────────────────────────────────
+function checkCollision() {
+  const erdeLeft = 30, erdeTop = 280, erdeW = 320, erdeH = 310;
+  const erdeCX = erdeLeft + erdeW / 2;
+  const erdeCY = erdeTop + erdeH / 2;
+  const dx = ballX - erdeCX;
+  const dy = ballY - erdeCY;
+  const dist = Math.sqrt(dx*dx + dy*dy);
+  const hitRadius = ballSize / 2 + Math.min(erdeW, erdeH) / 2 * 0.35;
+  const hit = dist < hitRadius;
+
+  if (hit !== erdeHit) {
+    erdeHit = hit;
+    if (hit) {
+      erdeStatic.style.opacity = '0';
+      lottieEl.style.opacity = '1';
+      if (lottieReady && anim) anim.play();
+    } else {
+      erdeStatic.style.opacity = '1';
+      lottieEl.style.opacity = '0';
+      if (anim) anim.stop();
+    }
+  }
+}
+
+// ─── RENDER BALL ─────────────────────────────────────────────────────────────
+function renderBall() {
+  const half = ballSize / 2;
+  ball.style.left = (ballX - half) + 'px';
+  ball.style.top  = (ballY - half) + 'px';
+  ball.style.width  = ballSize + 'px';
+  ball.style.height = ballSize + 'px';
+}
+
+// ─── PHYSICS LOOP ────────────────────────────────────────────────────────────
+setInterval(() => {
+  if (!hasGyro) return;
+  const friction = 0.9, maxVel = 12;
+  const half = ballSize / 2;
+  const maxX = 393 - half, maxY = 852 - half;
+
+  velX = Math.max(-maxVel, Math.min(maxVel, (velX + gravX) * friction));
+  velY = Math.max(-maxVel, Math.min(maxVel, (velY + gravY) * friction));
+  ballX = Math.max(half, Math.min(maxX, ballX + velX));
+  ballY = Math.max(half, Math.min(maxY, ballY + velY));
+
+  if (ballX <= half || ballX >= maxX) velX *= -0.4;
+  if (ballY <= half || ballY >= maxY) velY *= -0.4;
+
+  renderBall();
+  checkCollision();
+}, 16);
+
+// ─── GYRO PERMISSION ─────────────────────────────────────────────────────────
+gyroBtn.addEventListener('click', async () => {
+  if (typeof DeviceOrientationEvent !== 'undefined' &&
+      typeof DeviceOrientationEvent.requestPermission === 'function') {
+    try {
+      const result = await DeviceOrientationEvent.requestPermission();
+      if (result === 'granted') enableGyro();
+    } catch(e) { enableGyro(); }
+  } else {
+    enableGyro();
+  }
+});
+
+function enableGyro() {
+  hasGyro = true;
+  gyroBtn.style.display = 'none';
+  window.addEventListener('deviceorientation', (e) => {
+    gravX = (e.gamma || 0) * 0.06;
+    gravY = ((e.beta  || 45) - 45) * 0.06;
+  });
+}
+
+// ─── DRAG (fallback when no gyro) ────────────────────────────────────────────
+function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+
+ball.addEventListener('touchstart', (e) => {
+  if (e.touches.length === 2) {
+    e.preventDefault();
+    isPinching = true; isDragging = false;
+    const t = e.touches;
+    pinchStartDist = Math.hypot(t[0].clientX-t[1].clientX, t[0].clientY-t[1].clientY);
+    pinchStartSize = ballSize;
+  } else if (!hasGyro) {
+    e.preventDefault();
+    isDragging = true; isPinching = false;
+  }
+}, { passive: false });
+
+ball.addEventListener('touchmove', (e) => {
+  if (e.touches.length === 2 && isPinching) {
+    e.preventDefault();
+    const t = e.touches;
+    const d = Math.hypot(t[0].clientX-t[1].clientX, t[0].clientY-t[1].clientY);
+    ballSize = clamp(pinchStartSize * (d / pinchStartDist), 60, 280);
+    renderBall(); checkCollision();
+  } else if (e.touches.length === 1 && isDragging && !hasGyro) {
+    e.preventDefault();
+    const rect = document.getElementById('app').getBoundingClientRect();
+    ballX = clamp(e.touches[0].clientX - rect.left, ballSize/2, 393 - ballSize/2);
+    ballY = clamp(e.touches[0].clientY - rect.top,  ballSize/2, 852 - ballSize/2);
+    renderBall(); checkCollision();
+  }
+}, { passive: false });
+
+ball.addEventListener('touchend', () => { isDragging = false; isPinching = false; });
+
+// Mouse drag (desktop testing)
+ball.addEventListener('mousedown', (e) => { isDragging = true; e.preventDefault(); });
+document.addEventListener('mousemove', (e) => {
+  if (!isDragging || hasGyro) return;
+  const rect = document.getElementById('app').getBoundingClientRect();
+  ballX = clamp(e.clientX - rect.left, ballSize/2, 393 - ballSize/2);
+  ballY = clamp(e.clientY - rect.top,  ballSize/2, 852 - ballSize/2);
+  renderBall(); checkCollision();
+});
+document.addEventListener('mouseup', () => { isDragging = false; });
+
+// Initial render
+renderBall();
+</script>
+</body>
+</html>
