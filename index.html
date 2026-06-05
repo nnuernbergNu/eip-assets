@@ -931,17 +931,26 @@ function LottiePlayer({
   const animRef = useRef(null);
   const [ready, setReady] = useState(false);
   useEffect(() => {
-    const lottie = window.lottie;
-    if (!lottie || !containerRef.current) return;
-    animRef.current = lottie.loadAnimation({
-      container: containerRef.current,
-      renderer: "svg",
-      loop: true,
-      autoplay: false,
-      animationData: LOTTIE_DATA
-    });
-    animRef.current.addEventListener("data_ready", () => setReady(true));
-    return () => animRef.current?.destroy();
+    const tryInit = () => {
+      const lottie = window.lottie;
+      if (!lottie || !containerRef.current) return;
+      if (animRef.current) return;
+      animRef.current = lottie.loadAnimation({
+        container: containerRef.current,
+        renderer: "svg",
+        loop: true,
+        autoplay: false,
+        animationData: LOTTIE_DATA
+      });
+      animRef.current.addEventListener("data_ready", () => setReady(true));
+    };
+    tryInit();
+    // retry in case lottie not yet loaded
+    const timer = setTimeout(tryInit, 500);
+    return () => {
+      clearTimeout(timer);
+      if (animRef.current) animRef.current.destroy();
+    };
   }, []);
   useEffect(() => {
     if (!ready || !animRef.current) return;
@@ -1020,7 +1029,6 @@ function Screen2({
         pinchStartDist.current = getDist(e.touches);
         pinchStartSize.current = ballSize;
       } else if (e.touches.length === 1 && !gyroPermission) {
-        e.preventDefault();
         pinching.current = false;
         dragging.current = true;
       }
